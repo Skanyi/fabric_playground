@@ -39,7 +39,7 @@ install:
    sudo ldconfig
 
 # Set the correct project to deploy to
-- gcloud config set project continuous-deployment-python
+- gcloud config set project fabric-kube
 
 before_script:
 
