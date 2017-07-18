@@ -4,45 +4,19 @@ go:
 sudo: required
 services:
 - docker
-# Cache our Gcloud SDK between commands
 cache:
   directories:
-  - "$HOME/google-cloud-sdk/"
+  - $HOME/google-cloud-sdk/
 env:
 - TEST_TARGET=unit-test
 - TEST_TARGET=behave
 - TEST_TARGET=node-sdk-unit-tests
 before_install:
 - openssl aes-256-cbc -K $encrypted_659021d217bb_key -iv $encrypted_659021d217bb_iv
-  -in credentials.tar.gz.enc -out credentials.tar.gz -d
-
-# If the SDK is not already cached, download it and unpack it
-- if [ ! -d ${HOME}/google-cloud-sdk ]; then
-     curl https://sdk.cloud.google.com | bash;
-  fi
-- tar -xzf credentials.tar.gz
-- mkdir -p lib
-# Here we use the decrypted service account credentials to authenticate the command line tool
-- gcloud auth activate-service-account --key-file client-secret.json
-# [END auth]
-
-- echo "Starting Docker Daemon "
-- |
-  export TR_PULL_REQUEST="$TRAVIS_PULL_REQUEST" && export GIT_USER="$TRAVIS_REPO_SLUG"
-  USER_NAME="$(echo $GIT_USER | cut -d '/' -f 1)" && REPO_NAME="$(echo $GIT_USER | cut -d '/' -f 2)"
-  ip="$(ifconfig docker0 | grep "inet addr:" | awk '{print $2}' | cut -d ':' -f 2)"
-  port="$(ps -ef | grep docker | awk '{print $10}' | cut -d ':' -f 3 | cut -d '' -f 1)"
-  sudo stop docker
-  sudo docker daemon -H tcp://0.0.0.0:$port -H unix:///var/run/docker.sock >> dockerlogfile.log 2>&1 &
-install:
-- echo " INSTALLING DEPENDENCIES "
-- gcloud config set project fabric-kube
-before_script:
-- echo " CREATING BASE IMAGE "
-- cd $HOME/gopath/src/github.com/$USER_NAME/$REPO_NAME/fabric-scripts
-script:
-- echo "Executing Tests"
-
+  -in client-secret.json.enc -out client-secret.json -d
+  
 deploy:
   provider: gae
+  project: fabric-kube
+  keyfile: client-secret.json
   on: master
