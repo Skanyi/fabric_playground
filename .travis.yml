@@ -15,6 +15,14 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_659021d217bb_key -iv $encrypted_659021d217bb_iv
   -in client-secret.json.enc -out client-secret.json -d
   
+install:
+- echo " INSTALLING DEPENDENCIES "
+- gcloud config set project fabric-kube
+before_script:
+- echo " CREATING BASE IMAGE "
+- cd $HOME/gopath/src/github.com/$USER_NAME/$REPO_NAME/fabric-scripts
+script:
+- echo "Executing Tests"
 deploy:
   provider: gae
   project: fabric-kube
