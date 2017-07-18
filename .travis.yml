@@ -1,4 +1,3 @@
-
 # Copyright IBM Corp. All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -37,10 +36,6 @@ install:
    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get -qq update && sudo apt-get -qq install g++-4.8 && sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
    sudo apt-get install build-essential -y
    sudo ldconfig
-
-# Set the correct project to deploy to
-- gcloud config set project fabric-kube
-
 before_script:
 
  - echo " CREATING BASE IMAGE "
@@ -64,4 +59,3 @@ after_failure:
    cd $HOME/gopath/src/github.com/hyperledger/fabric
    chmod +x scripts/containerlogs.sh
    sudo ./scripts/containerlogs.sh
-
