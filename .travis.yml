@@ -1,47 +1,33 @@
-# Copyright IBM Corp. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-#
-
 language: go
 go:
- - 1.7
+- 1.7
 sudo: required
 services:
- - docker
+- docker
 env:
-    - TEST_TARGET=unit-test
-    - TEST_TARGET=behave
-    - TEST_TARGET=node-sdk-unit-tests
-
+- TEST_TARGET=unit-test
+- TEST_TARGET=behave
+- TEST_TARGET=node-sdk-unit-tests
 before_install:
+- openssl aes-256-cbc -K $encrypted_659021d217bb_key -iv $encrypted_659021d217bb_iv
+  -in credentials.tar.gz.enc -out credentials.tar.gz -d
 
- - echo "Starting Docker Daemon "
- - |
-   export TR_PULL_REQUEST="$TRAVIS_PULL_REQUEST" && export GIT_USER="$TRAVIS_REPO_SLUG"
-   USER_NAME="$(echo $GIT_USER | cut -d '/' -f 1)" && REPO_NAME="$(echo $GIT_USER | cut -d '/' -f 2)"
-   ip="$(ifconfig docker0 | grep "inet addr:" | awk '{print $2}' | cut -d ':' -f 2)"
-   port="$(ps -ef | grep docker | awk '{print $10}' | cut -d ':' -f 3 | cut -d '' -f 1)"
-   sudo stop docker
-   sudo docker daemon -H tcp://0.0.0.0:$port -H unix:///var/run/docker.sock >> dockerlogfile.log 2>&1 &
+- echo "Starting Docker Daemon "
+- |
+  export TR_PULL_REQUEST="$TRAVIS_PULL_REQUEST" && export GIT_USER="$TRAVIS_REPO_SLUG"
+  USER_NAME="$(echo $GIT_USER | cut -d '/' -f 1)" && REPO_NAME="$(echo $GIT_USER | cut -d '/' -f 2)"
+  ip="$(ifconfig docker0 | grep "inet addr:" | awk '{print $2}' | cut -d ':' -f 2)"
+  port="$(ps -ef | grep docker | awk '{print $10}' | cut -d ':' -f 3 | cut -d '' -f 1)"
+  sudo stop docker
+  sudo docker daemon -H tcp://0.0.0.0:$port -H unix:///var/run/docker.sock >> dockerlogfile.log 2>&1 &
 install:
-
- - echo " INSTALLING DEPENDENCIES "
- - |
-   cd $HOME/gopath/src/github.com/$USER_NAME/$REPO_NAME
-   git clone https://github.com/hyperledger/fabric-baseimage.git
-
+- echo " INSTALLING DEPENDENCIES "
+- gcloud config set project continuous-deployment-python
 before_script:
-
- - echo " CREATING BASE IMAGE "
- - cd $HOME/gopath/src/github.com/$USER_NAME/$REPO_NAME/fabric-scripts
-
+- echo " CREATING BASE IMAGE "
+- cd $HOME/gopath/src/github.com/$USER_NAME/$REPO_NAME/fabric-scripts
 script:
-
- - echo "Executing Tests"
-
+- echo "Executing Tests"
 after_failure:
-
- - |
-   echo "Click below links to view behave container log files"
-  
+- |
+  echo "Click below links to view behave container log files"
